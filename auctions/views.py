@@ -23,7 +23,7 @@ def create(request):
             new_listing.seller = request.user
             new_listing.save()
             messages.success(request, (f'\"{ listing_form.cleaned_data["title"] }\" was successfully added!'))
-            return redirect("index")
+            return redirect('listing', listing_id=new_listing.id)
         else:
             message = "Invalid form, try again."
             return render(request, "auctions/create.html", {
