@@ -19,7 +19,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     startbid = models.IntegerField()
-    photo_url = models.URLField()
+    photo_url = models.URLField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="categories")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sellers")
     available = models.BooleanField(default=True)

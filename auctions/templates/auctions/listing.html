@@ -1,0 +1,42 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block main %}
+    <h2>
+        {{listing.title}}
+        {% if not listing.available %}
+            <p style="color:red;">Bidding Closed</p>
+        {% endif %}
+    </h2>
+    
+
+    <article>
+        <section>
+            
+            {% if listing.photo_url != null %}
+                <img class="image" src="{{listing.photo_url}}" width="150px" height="auto">
+            {% endif %}    
+            <li>
+                Description: {{listing.description}}
+            </li>
+            <li>
+                Seller: {{listing.seller}}
+            </li>
+            <li>
+                Highest Bid: ${{listing.startbid}} <br>
+                {% if user.is_authenticated %}
+                <!--Add stuff about bidding later-->
+                {% endif %}
+            </li>
+
+            {% if user.is_authenticated %}
+            <br>
+                <!--Add stuff about watchlist later-->
+            {% endif %}
+                
+        </section>
+
+        
+    </article>
+    
+{% endblock %}

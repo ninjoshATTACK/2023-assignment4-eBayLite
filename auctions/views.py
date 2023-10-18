@@ -1,15 +1,49 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib import messages
 
-from .models import User
-
+from .forms import ListingForm
+from .models import User, Listing, Category
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        'listings': Listing.objects.all()
+    })
 
+def create(request):
+    if request.method == "POST":
+        listing_form = ListingForm(request.POST, request.FILES)
+        message = ""
+
+        if listing_form.is_valid():
+            new_listing = listing_form.save(commit=False)
+            new_listing.seller = request.user
+            new_listing.save()
+            messages.success(request, (f'\"{ listing_form.cleaned_data["title"] }\" was successfully added!'))
+            return redirect("index")
+        else:
+            message = "Invalid form, try again."
+            return render(request, "auctions/create.html", {
+                "listing_form": listing_form,
+                "message": message
+            })
+
+    else:
+        listing_form = ListingForm()
+        
+        return render(request, "auctions/create.html", {
+            "listing_form": listing_form,
+            "categories": Category.objects.all()
+        })
+
+def listing(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    return render(request, "auctions/listing.html", {
+        'listing': listing
+    })
 
 def login_view(request):
     if request.method == "POST":

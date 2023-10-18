@@ -4,10 +4,31 @@
 <h2>Active Listings</h2>
 
 <article>
-    <section>Listing 1</section>
+    {% for listing in listings %}
+        {% if listing.available %}
+            <section>
+                <a href="{% url 'listing' listing.id %}" style="text-decoration: none;">
+                    <div class="listing">
 
-    <section>Listing 2</section>
+                        <h3>{{listing.title}}</h3>
+                        {% if listing.photo_url != null %}
+                            <img class="image" src="{{listing.photo_url}}" width="150px" height="auto">
+                        {% endif %}    
+                        <li>
+                            Description: {{listing.description}}
+                        </li>
+                        <li>
+                            Highest Bid: ${{listing.startbid}}
+                        </li>
 
-    <section>Listing 3</section>
+                        {% if user.is_authenticated %}
+                            <br>
+                            <!--Add stuff about watchlist later-->
+                        {% endif %}
+                    </div>
+                </a>
+            </section> 
+        {% endif %}
+    {% endfor %}
 </article>
 {% endblock %}
