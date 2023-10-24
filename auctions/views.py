@@ -63,6 +63,20 @@ def comment(request, listing_id):
         'comment_form': comment_form, 'listing': listing
     })
 
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        'categories': Category.objects.all()
+    })
+
+def category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    listings = Listing.objects.filter(category = category, available=True)
+
+    return render(request, "auctions/category.html", {
+        'listings': listings, "category": category
+    })
+
+# Login/Logout stuff
 def login_view(request):
     if request.method == "POST":
 
