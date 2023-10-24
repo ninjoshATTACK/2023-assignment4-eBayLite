@@ -6,13 +6,15 @@ from django.urls import reverse
 from django.contrib import messages
 
 from .forms import ListingForm, CommentForm
-from .models import User, Listing, Category, Comment
+from .models import User, Listing, Category, Comment, Watchlist
 
+###############################Index Page#####################################
 def index(request):
     return render(request, "auctions/index.html", {
         'listings': Listing.objects.all()
     })
 
+#############################Create Listings##################################
 def create(request):
     if request.method == "POST":
         listing_form = ListingForm(request.POST, request.FILES)
@@ -38,12 +40,14 @@ def create(request):
             "listing_form": listing_form, "categories": Category.objects.all()
         })
 
+#############################Displays listings################################
 def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     return render(request, "auctions/listing.html", {
         'listing': listing, 'comment_form': CommentForm(), 'comment': comment
     })
 
+################################Comments######################################
 def comment(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
 
@@ -63,6 +67,7 @@ def comment(request, listing_id):
         'comment_form': comment_form, 'listing': listing
     })
 
+################################Categories#####################################
 def categories(request):
     return render(request, "auctions/categories.html", {
         'categories': Category.objects.all()
@@ -76,7 +81,15 @@ def category(request, category_id):
         'listings': listings, "category": category
     })
 
-# Login/Logout stuff
+################################Watchlist######################################
+def watchlist(request, user):
+    watchlist = Watchlist.objects.get() # I don't know how to pull the watchlist of the specific user
+
+    return render(request, "auctions/watchlist.html", {
+        'watchlist': watchlist
+    })
+
+#############################Login/Logout stuff################################
 def login_view(request):
     if request.method == "POST":
 

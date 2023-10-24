@@ -36,3 +36,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.commenter}: {self.content}'
+
+# Model for watchlist
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlists", default=None)
+    listing = models.ManyToManyField(Listing, related_name="watchlists", default=None) #idk why i can't put on_delete here
+
+    def __str__(self):
+        return f'{self.user}\'s watchlist'
