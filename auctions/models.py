@@ -27,3 +27,12 @@ class Listing(models.Model):
 
     def __str__(self):
         return f'{self.id}: {self.title}'
+
+# Model for comments
+class Comment(models.Model):
+    content = models.TextField()
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments", default=None)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments", default=None)
+
+    def __str__(self):
+        return f'{self.commenter}: {self.content}'

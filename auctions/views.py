@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from .forms import ListingForm
-from .models import User, Listing, Category
+from .forms import ListingForm, CommentForm
+from .models import User, Listing, Category, Comment
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -35,14 +35,32 @@ def create(request):
         listing_form = ListingForm()
         
         return render(request, "auctions/create.html", {
-            "listing_form": listing_form,
-            "categories": Category.objects.all()
+            "listing_form": listing_form, "categories": Category.objects.all()
         })
 
 def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     return render(request, "auctions/listing.html", {
-        'listing': listing
+        'listing': listing, 'comment_form': CommentForm(), 'comment': comment
+    })
+
+def comment(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST, request.FILES)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.commenter = request.user
+            new_comment.listing = listing
+            new_comment.save()
+            return redirect('listing', listing_id=listing_id)
+        else:
+            pass #for now
+    else:
+        comment_form = CommentForm()
+    return render(request, "auctions/listing.html", {
+        'comment_form': comment_form, 'listing': listing
     })
 
 def login_view(request):

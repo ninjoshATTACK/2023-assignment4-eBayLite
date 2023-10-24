@@ -32,11 +32,28 @@
             {% if user.is_authenticated %}
             <br>
                 <!--Add stuff about watchlist later-->
-            {% endif %}
-                
+            {% endif %}       
         </section>
 
+        {% if user.is_authenticated %}
+            <section>
+                <form action="{% url 'comment' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    {{comment_form}}
+                    <br>
+                    <button type="submit">Submit</button>
+                </form>
+            </section>
+        {% endif %}
         
+        <section>
+            <h3>Comments</h3>
+            {% for comment in listing.comments.all %}
+                <li class="comment-section">
+                    {{comment.commenter}}: {{comment.content}}
+                </li>
+            {% endfor %}
+        </section>
     </article>
     
 {% endblock %}
