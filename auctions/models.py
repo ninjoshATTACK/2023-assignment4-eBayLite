@@ -1,11 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 # superuser: superjosh pass: 123
 
 # Model for users
 class User(AbstractUser):
-    pass
+    watched_listings = models.ManyToManyField('Listing', default=None)
 
 # Model for categories
 class Category(models.Model):
@@ -39,8 +40,8 @@ class Comment(models.Model):
 
 # Model for watchlist
 class Watchlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlists", default=None)
-    listing = models.ManyToManyField(Listing, related_name="watchlists", default=None) #idk why i can't put on_delete here
+    watchlist_listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_watchlist")
+    watchlist_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist_user")
 
     def __str__(self):
         return f'{self.user}\'s watchlist'
