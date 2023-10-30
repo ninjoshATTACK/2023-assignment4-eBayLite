@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from .forms import ListingForm, CommentForm
-from .models import User, Listing, Category, Comment, Watchlist
+from .forms import ListingForm, CommentForm, BidForm
+from .models import User, Listing, Category, Comment, Watchlist, Bid
 
 def getLastPk(obj):
     if(obj.objects.first() is None):
@@ -120,6 +120,38 @@ def watchlist_remove(request, listing_id):
         watchlist = Watchlist.objects.get(user = request.user).watched_listings.remove(listing)
 
     return redirect('watchlist')
+
+##################################Bidding######################################
+def bid(request, listing_id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(pk=listing_id)
+        message = ""
+
+        if request.method == "POST":
+            bid_form = BidForm(request.POST, request.FILES)
+
+            if bid_form.is_valid():
+                new_bid = bid_form.save(commit=False)
+                if new_bid.price > listing.startbid:
+                    new_bid.buyer = request.user
+                    new_bid.listing = listing
+                    new_bid.save()
+                    listing.startbid = new_bid.price
+                    listing.save()
+                    return redirect('listing', listing_id=listing_id)
+                else:
+                    message = "Something went wrong with the bid (your bid must be higher than current price)"
+                    return render(request, "auctions/bid.html", {
+                        "bid_form": bid_form, "message": message, "listing": listing
+                    })
+        else:
+            bid_form = BidForm()
+        
+        return render(request, "auctions/bid.html", {
+            "bid_form": bid_form, "listing": listing,
+        })
+
+        
 
 #############################Login/Logout stuff################################
 def login_view(request):

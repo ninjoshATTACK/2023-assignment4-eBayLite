@@ -24,6 +24,7 @@ class Listing(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="categories")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sellers")
     available = models.BooleanField(default=True)
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="winner")
     
 
     def __str__(self):
@@ -38,9 +39,19 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.commenter}: {self.content}'
 
+# Model for watchlists
 class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
     watched_listings = models.ManyToManyField(Listing, related_name="listings", blank=True)
 
     def __str__(self):
         return f'{self.user}\'s watchlist'
+
+# Model for Bids
+class Bid(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+    price = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.price}'

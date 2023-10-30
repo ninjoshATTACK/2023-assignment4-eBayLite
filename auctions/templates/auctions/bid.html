@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block main %}
+    <h2>New bid for {{listing.title}}</h2>
+    <h3 style="color:red;">{{message}}</h3>
+    <div>Current Price: ${{listing.startbid}}</div>
+    <form action="{% url 'bid' listing.id %}" method="POST">
+        {% csrf_token %}
+        {{bid_form}}
+
+        <br>
+        <button type="submit">Place Bid</button>
+    </form>
+    
+{% endblock %}

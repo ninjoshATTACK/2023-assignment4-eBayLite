@@ -24,12 +24,12 @@
             </li>
             <li>
                 Highest Bid: ${{listing.startbid}} <br>
-                {% if user.is_authenticated %}
-                <!--Add stuff about bidding later-->
+                {% if user.is_authenticated and user != listing.seller %}
+                <a href="{% url 'bid' listing.id %}" style="background-color: rgb(161, 197, 161);" >Place Bid</a>
                 {% endif %}
             </li>
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user != listing.seller %}
             <br>
                 <a href="{% url 'watchlist_add' listing.id %}">Add to Watchlist</a>
             {% endif %}       
