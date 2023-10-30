@@ -4,8 +4,11 @@
 {% block main %}
     <h2>
         {{listing.title}}
-        {% if not listing.available %}
+        {% if not listing.available and user != winner %}
             <p style="color:red;">Bidding Closed</p>
+        {% endif %}
+        {% if not listing.available and user == listing.winner %}
+            <p style="color:green;">Congratulations! You have won this item!</p>
         {% endif %}
     </h2>
     
@@ -23,13 +26,23 @@
                 Seller: {{listing.seller}}
             </li>
             <li>
+                {% if listing.available == True %}
                 Highest Bid: ${{listing.startbid}} <br>
-                {% if user.is_authenticated and user != listing.seller %}
+                {% else %}
+                Final Bid: ${{listing.startbid}}
+                <li>Winner: {{listing.winner}}</li> <br>
+                {% endif %}
+                {% if user.is_authenticated and user != listing.seller and listing.available == True %}
                 <a href="{% url 'bid' listing.id %}" style="background-color: rgb(161, 197, 161);" >Place Bid</a>
                 {% endif %}
             </li>
 
-            {% if user.is_authenticated and user != listing.seller %}
+            {% if user == listing.seller and listing.available == True %}
+            <br>
+                <a href="{% url 'close' listing.id %}">Close Listing and End Bidding</a>
+            {% endif %} 
+
+            {% if user.is_authenticated and user != listing.seller and listing.available == True %}
             <br>
                 <a href="{% url 'watchlist_add' listing.id %}">Add to Watchlist</a>
             {% endif %}       

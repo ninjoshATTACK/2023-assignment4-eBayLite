@@ -56,6 +56,21 @@ def listing(request, listing_id):
         'listing': listing, 'comment_form': CommentForm(), 'comment': comment
     })
 
+def close(request, listing_id):
+    listingtoclose = Listing.objects.get(pk=listing_id)
+    bids = Bid.objects.filter(listing=listingtoclose)
+    final_price = bids.order_by('-price')[0]
+    winner = User
+
+    for bid in bids:
+        if bid.price == final_price.price:
+            winner = bid.buyer
+            listingtoclose.winner = winner
+            listingtoclose.available = False
+            listingtoclose.save()
+    
+    return redirect('listing', listing_id=listing_id)
+
 ################################Comments######################################
 def comment(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
