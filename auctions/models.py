@@ -37,11 +37,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.commenter}: {self.content}'
-
-# Model for watchlist
-class Watchlist(models.Model):
-    watchlist_listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_watchlist")
-    watchlist_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist_user")
-
-    def __str__(self):
-        return f'{self.user}\'s watchlist'
