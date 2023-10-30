@@ -1,3 +1,4 @@
+from typing import List
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -6,7 +7,15 @@ from django.urls import reverse
 from django.contrib import messages
 
 from .forms import ListingForm, CommentForm
-from .models import User, Listing, Category, Comment
+from .models import User, Listing, Category, Comment, Watchlist
+
+def getLastPk(obj):
+    if(obj.objects.first() is None):
+        return 1
+    else:
+        get_pk = obj.objects.order_by('-pk')[0]
+        last_pk = get_pk.pk +1
+        return last_pk
 
 ###############################Index Page#####################################
 def index(request):
@@ -82,12 +91,35 @@ def category(request, category_id):
     })
 
 ################################Watchlist######################################
-def watchlist(request, user):
-    watchlist = Watchlist.objects.get() # I don't know how to pull the watchlist of the specific user
+def watchlist(request):
+    watchlist = Watchlist.objects.get(user = request.user)
 
     return render(request, "auctions/watchlist.html", {
-        'watchlist': watchlist
+        'watchlist': watchlist.watched_listings.all()
     })
+
+def watchlist_add(request, listing_id):
+    if request.user.is_authenticated:
+        if Watchlist.objects.filter(user = request.user).exists():
+            watchlist = Watchlist.objects.get(user = request.user)
+        else:
+            watchlist = Watchlist(id = getLastPk(Watchlist), user=request.user)
+
+        listing = Listing.objects.get(id=listing_id)
+        watchlist.save()
+        watchlist.watched_listings.add(listing)
+        watchlist.save()
+
+    return render(request, "auctions/watchlist.html", {
+        'watchlist': watchlist.watched_listings.all()
+    })
+
+def watchlist_remove(request, listing_id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(id=listing_id)
+        watchlist = Watchlist.objects.get(user = request.user).watched_listings.remove(listing)
+
+    return redirect('watchlist')
 
 #############################Login/Logout stuff################################
 def login_view(request):

@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block main %}
+<h2>Watchlist</h2>
+
+<article>
+    {% for listing in watchlist %}
+        {% if listing.available %}
+            <section>
+                <a href="{% url 'listing' listing.id %}" style="text-decoration: none;">
+                    <div class="listing">
+
+                        <h3>{{listing.title}}</h3>
+                        {% if listing.photo_url != null %}
+                            <img class="image" src="{{listing.photo_url}}" width="150px" height="auto">
+                        {% endif %}    
+                        <li>
+                            Description: {{listing.description}}
+                        </li>
+                        <li>
+                            Highest Bid: ${{listing.startbid}}
+                        </li>
+
+                        {% if user.is_authenticated %}
+                            <br>
+                            <a href="{% url 'watchlist_remove' listing.id %}">Remove listing from your Watchlist</a>
+                        {% endif %}
+                    </div>
+                </a>
+            </section> 
+        {% endif %}
+    {% endfor %}
+</article>
+{% endblock %}

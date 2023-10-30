@@ -6,7 +6,7 @@ from django.db import models
 
 # Model for users
 class User(AbstractUser):
-    watched_listings = models.ManyToManyField('Listing', default=None)
+    pass
 
 # Model for categories
 class Category(models.Model):
@@ -37,3 +37,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.commenter}: {self.content}'
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    watched_listings = models.ManyToManyField(Listing, related_name="listings", blank=True)
+
+    def __str__(self):
+        return f'{self.user}\'s watchlist'
