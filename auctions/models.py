@@ -54,4 +54,4 @@ class Bid(models.Model):
     price = models.IntegerField()
 
     def __str__(self):
-        return f'{self.price}'
+        return f'{self.price} on {self.listing}'
